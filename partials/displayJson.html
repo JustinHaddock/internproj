@@ -15,5 +15,7 @@
     </ul>
 </div> -->
 <section>
-    {{jDisplay.printList(c, "")}}
+    <div ng-repeat = "c in jDisplay.jList">
+        {{jDisplay.printList(c, "")}}
+    </div>
 </section>

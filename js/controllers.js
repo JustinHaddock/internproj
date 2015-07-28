@@ -41,17 +41,21 @@ bubbleController.controller('jsonDisplay', ['$scope', function($scope) {
     this.jList = $scope.json;
 
     this.printList = function(item, string) {
-        string.concat("<ul>");
+        string += ("<ul>");
+        console.log(item);
         for (key in item){
+            console.log(item[key]);
+            console.log(typeof item[key]);
+            console.log("------------------------------------------");
             if (typeof item[key] === 'string'){
-                string.concat("<li>" + item[key]);
+                string += ("<li>" + item[key] + "</li>");
             }
             else{
                 this.printList(item[key], string);
             }
         }
-        string.concat("</ul>");
-        console.log(string);
+        string += "</ul>";
+        Document.write(string);
         return string;
     }
 }]);
