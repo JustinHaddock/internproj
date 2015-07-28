@@ -1,0 +1,19 @@
+<!-- <div>
+    <ul>
+        <li ng-repeat="c in jDisplay.jList">
+            <div ng-switch on="c.children.length > 0">
+                <div ng-switch-when="true">
+                    <div ng-init="jDisplay.jList = c.children;" ng-include="'partials/displayJson.html'">
+                    </div>
+                </div>
+                <div ng-switch-when="false">
+                	<p>{{c}}</p>
+                    <p>{{c.children.length}}</p>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div> -->
+<section>
+    {{jDisplay.printList(c, "")}}
+</section>

@@ -1,0 +1,58 @@
+{
+    "cast": [
+        {
+            "firstName": "Arnold",
+            "lastName": "Schwarzenegger",
+            "weapons": [
+                {
+                    "1": "Gainz"
+                },
+                {
+                    "2": "Gunz"
+                },
+                {
+                    "3": "Booby Traps"
+                },
+                {
+                    "4": "Being huge as shit"
+                }
+            ]
+        },
+        {
+            "firstName": "Carl",
+            "lastName": "Weathers",
+            "weapons": [
+                {
+                    "1": "Gainz"
+                },
+                {
+                    "2": "Gunz"
+                },
+                {
+                    "3": "Cigars"
+                },
+                {
+                    "4": "Sexy green hat"
+                }
+            ]
+        },
+        {
+            "firstName": "Shane",
+            "lastName": "Black",
+            "weapons": [
+                {
+                    "1": "Gainz"
+                },
+                {
+                    "2": "Gunz"
+                },
+                {
+                    "3": "Accent"
+                },
+                {
+                    "4": "Being a dick"
+                }
+            ]
+        }
+    ]
+}

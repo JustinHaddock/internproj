@@ -1,0 +1,34 @@
+{
+    "cast": [
+        {
+            "firstName": "Arnold",
+            "lastName": "Schwarzenegger",
+            "weapons": [
+                {
+                    "1": "Gainz"
+                },
+                {
+                    "2": "Gunz"
+                },
+                {
+                    "3": "Booby Traps"
+                },
+                {
+                    "4": "Being huge as shit"
+                }
+            ]
+        },
+        {
+            "firstName": "Johnny",
+            "lastName": "Cage",
+            "bitches": [
+                {
+                    "sonya": "true"
+                },
+                {
+                    "mileena": "false"
+                }
+            ]
+        }
+    ]
+}
