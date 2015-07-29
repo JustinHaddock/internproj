@@ -8,13 +8,7 @@ bubbleController.controller('jsonController', ['$scope', '$http', 'ngDialog', fu
         $scope.jsonList = [];
         var path = "projects/proj" + pj + ".json";
         $http.get(path).then(function(data) {
-            if (data.data instanceof Array){
-                $scope.json = data.data;
-            }
-            else{
-                $scope.json = data.data[Object.keys(data.data)[0]];
-            }
-            console.log($scope.json);
+            $scope.json = data.data;
             $scope.bringUpDialoge();
         });
     };
@@ -26,6 +20,7 @@ bubbleController.controller('jsonController', ['$scope', '$http', 'ngDialog', fu
     };
 
     $scope.bringUpDialoge = function() {
+        console.log("Dialog");
         ngDialog.openConfirm({
             className: 'ngdialog-theme-default',
             template: 'partials/displayJson.html',
@@ -34,28 +29,18 @@ bubbleController.controller('jsonController', ['$scope', '$http', 'ngDialog', fu
         })
     }
 }]);
-
-
+bubbleController.controller('helperController', ['$scope', function($scope) {
+        this.key = null;
+        this.value = null;
+}]);
 
 bubbleController.controller('jsonDisplay', ['$scope', function($scope) {
-    this.jList = $scope.json;
+    this.list = $scope.json;
 
-    this.printList = function(item, string) {
-        string += ("<ul>");
-        console.log(item);
-        for (key in item){
-            console.log(item[key]);
-            console.log(typeof item[key]);
-            console.log("------------------------------------------");
-            if (typeof item[key] === 'string'){
-                string += ("<li>" + item[key] + "</li>");
-            }
-            else{
-                this.printList(item[key], string);
-            }
-        }
-        string += "</ul>";
-        Document.write(string);
-        return string;
-    }
+    this.canRecurse = function(v) {
+        if (Array.isArray(v)) return '2';
+        if (typeof v == 'object') return '1';
+        else return '0';
+    };
+
 }]);

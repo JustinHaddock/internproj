@@ -1,0 +1,15 @@
+{{key}}
+{{jDisplay.canRecurse(value) == 2}}
+
+<span ng-show="jDisplay.canRecurse(value) == 0">{{value}}<span>
+<ul ng-show="jDisplay.canRecurse(value) == 1">
+	<p>this doesn't run</p>
+	<li ng-repeat="(key, value) in value" ng-include="'partials/displayJson-helper.html'" ng-controller="jsonDisplay as jDisplay"></li>
+</ul>
+
+<ul ng-show="jDisplay.canRecurse(value) == 2">
+	<p>this doesn't run either</p>
+	<div ng-repeat="object in value">
+		<li ng-repeat="(key, value) in object" ng-include="'partials/displayJson-helper.html'" ng-controller="jsonDisplay as jDisplay"></li>
+	</div>
+</ul>

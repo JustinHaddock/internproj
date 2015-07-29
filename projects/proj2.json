@@ -1,34 +1,17 @@
 {
-    "cast": [
+    "firstName": "Johnny",
+    "lastName": "Cage",
+    "object": {
+        "this": "that"
+    },
+    "women": [
         {
-            "firstName": "Arnold",
-            "lastName": "Schwarzenegger",
-            "weapons": [
-                {
-                    "1": "Gainz"
-                },
-                {
-                    "2": "Gunz"
-                },
-                {
-                    "3": "Booby Traps"
-                },
-                {
-                    "4": "Being huge as shit"
-                }
-            ]
+            "Name": "Sonya",
+            "Species": "Human"
         },
         {
-            "firstName": "Johnny",
-            "lastName": "Cage",
-            "bitches": [
-                {
-                    "sonya": "true"
-                },
-                {
-                    "mileena": "false"
-                }
-            ]
+            "Name": "Mileena",
+            "Species": "Edenian"
         }
     ]
 }
