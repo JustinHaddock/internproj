@@ -20,7 +20,6 @@ bubbleController.controller('jsonController', ['$scope', '$http', 'ngDialog', fu
     };
 
     $scope.bringUpDialoge = function() {
-        console.log("Dialog");
         ngDialog.openConfirm({
             className: 'ngdialog-theme-default',
             template: 'partials/displayJson.html',
@@ -35,12 +34,52 @@ bubbleController.controller('helperController', ['$scope', function($scope) {
 }]);
 
 bubbleController.controller('jsonDisplay', ['$scope', function($scope) {
-    this.list = $scope.json;
-
-    this.canRecurse = function(v) {
-        if (Array.isArray(v)) return '2';
-        if (typeof v == 'object') return '1';
-        else return '0';
-    };
+    this.items = $scope.json;
 
 }]);
+
+bubbleController.directive('listData', function() {
+  var Controller;
+  
+  Controller = function () {
+    var listData = this;
+
+    listData.isArray = function (value) {
+      return value.constructor === Array
+    };
+    
+    listData.isObject = function (value) {
+      return value.constructor === Object
+    };
+    
+    return listData;
+  };
+  
+  return {
+    restrict: "E",
+    controller: Controller,
+    controllerAs: 'listData',
+    scope: true,
+    bindToController: {
+      list: "="
+    },
+    template: 
+              "<p>{{listData.list}}</p>" +
+              "<ul>" +
+                "<li ng-repeat='(item, value) in listData.list'>" +
+                  "{{item}}" + "{{value}}" +
+                  "<ul ng-if='listData.isArray(value)'>" +
+                    "<li ng-repeat='item in value' ng-include='partials/json-helper.html'>" +
+                      "{{item}}" +
+                    "</li>" +
+                  "</ul>" +
+                  "<ul ng-if='listData.isObject(value)'>" +
+                    "<li ng-repeat='item in value' ng-include='partials/json-helper.html'>" +
+                      "{{item}}" +
+                    "</li>" +
+                  "</ul>" +
+                "</li>" +
+              "</ul>"
+  };
+  
+});

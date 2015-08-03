@@ -1,7 +1,44 @@
-<section>
-	<p> take 68 </p>
-	<button ng-click = "jCont.open(1)" ng-show="jCont.showButtons"> project 1 </button>
-	<button ng-click = "jCont.open(2)" ng-show="jCont.showButtons"> project 2 </button>
-	<button ng-click = "jCont.open(3)" ng-show="jCont.showButtons"> project 3 </button>
-</section>
+   <div id="mynetwork"></div>
 
+    <script type="text/javascript">
+        // create an array with nodes
+        var nodes = new vis.DataSet([
+            {id: 1,label: 'dog'}, 
+            {id: 2,label: 'dogg'}, 
+            {id: 3,label: 'doggg'}, 
+            {id: 4,label: 'dogggg'}, 
+            {id: 5,label: 'doggggg'}, 
+            {id: 6,label: 'dogggggg'},
+            {id: 7,label: 'doggggggg'},
+            {id: 8,label: 'dogggggggg'}
+        ]);
+        // create an array with edges
+        var edges = new vis.DataSet([
+            {from: 1,to: 3}, 
+            {from: 1,to: 2},
+            {from: 2,to: 4}, 
+            {from: 2,to: 5},
+            {from: 3,to: 6},
+            {from: 2,to: 6},
+            {from: 5,to: 6},
+            {from: 1,to: 4},
+            {from: 7,to: 8}
+        ]);
+        // create a network
+        var container = document.getElementById('mynetwork');
+
+        // provide the data in the vis format
+        var data = {
+            nodes: nodes,
+            edges: edges
+        };
+        var options = {
+            physics: {
+                enabled: true,
+                maxVelocity: 1
+            }
+        };
+
+        // initialize your network!
+        var network = new vis.Network(container, data, options);
+    </script>

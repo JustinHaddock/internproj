@@ -1,0 +1,18 @@
+<ul>
+  <li>
+    {{item}}
+    <ul ng-if='listData.isArray(value)'>
+      <li ng-repeat='(item, value) in value' ng-include='partials/json-helper.html'>
+        {{item}} 
+      </li>
+    </ul>
+    <ul ng-if='listData.isObject(value)'>
+      <li ng-repeat='(item, value) in value' ng-include='partials/json-helper.html'>
+        {{item}} {{listData.isObject(item)}}
+      </li>
+    </ul>
+      <li ng-if='!listData.isObject(value)'>
+        {{value}}
+      </li>
+  </li>
+</ul>
