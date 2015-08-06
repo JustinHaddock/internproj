@@ -1,17 +1,19 @@
 {
-    "firstName": "Johnny",
-    "lastName": "Cage",
-    "object": {
-        "this": "that"
-    },
-    "women": [
+    "cast": [
         {
-            "Name": "Sonya",
-            "Species": "Human"
-        },
-        {
-            "Name": "Mileena",
-            "Species": "Edenian"
+            "Arnold Schwarzenegger": {
+                "weapons": [
+                    {
+                        "sexiness": "2"
+                    },
+                    {
+                        "being huge": "2"
+                    },
+                    {
+                        "cigars": "2"
+                    }
+                ]
+            }
         }
     ]
 }

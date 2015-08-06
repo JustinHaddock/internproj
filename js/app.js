@@ -1,6 +1,6 @@
-var myApp = angular.module('bubbleView', [
+var myApp = angular.module('internApp', [
 	'ngRoute',
-	'myApp'
+	'bubbleController'
 ])
 
 
@@ -9,6 +9,10 @@ myApp.config(['$routeProvider', function($routeProvider) {
 	when('/home', {
 		templateUrl: 'partials/edit.html',
 		controller: 'jsonController as jCont'
+	}).
+	when('/display/:projNum', {
+		templateUrl: 'partials/show.html',
+		controller: 'garbageController as garbage'
 	}).
 	otherwise({
 		redirectTo: '/home'
