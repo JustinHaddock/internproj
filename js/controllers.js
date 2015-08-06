@@ -1,11 +1,5 @@
 var bubbleController = angular.module('bubbleController', []);
 
-bubbleController.controller('jsonController', ['$scope', '$http', function($scope, $http) {
-    $scope.json = null;
-}]);  
-bubbleController.controller('garbageController', ['$scope', '$http', function($scope, $http) {
-    $scope.json = null;
-}]);  
 
 bubbleController.directive('showBubbles', ['$http', function($http) {
     var Controller;
@@ -20,9 +14,26 @@ bubbleController.directive('showBubbles', ['$http', function($http) {
             var pj = 2;
             listData.jsonList = [];
             var path = "projects/proj" + pj + ".json";
-            $http.get(path).then(function(data) {
-                listData.makeGraph(data.data);
-            });
+            var gephiJSON = loadJSON(path)
+            var parserOptions = {
+                edges: {
+                    inheritColors: false
+                },
+                nodes: {
+                    fixed: true,
+                    parseColor: false
+                }
+            }
+            var parsed = vis.network.convertGephi(gephiJSON, parserOptions);
+            var data = {
+                nodes: parsed.nodes,
+                edges: parsed.edges
+            }
+
+            var container = document.getElementById('mynetwork');
+
+            var network = new vis.Network(container, data);
+                // listData.makeGraph(data.data);
         })();
         
         listData.makeGraph = function(data){
@@ -54,9 +65,7 @@ bubbleController.directive('showBubbles', ['$http', function($http) {
         };
         listData.getObjectArray = function(data){
             var numList = [];
-            console.log(data);
             for (proprety in data){
-                console.log("       " + proprety);
                 if (listData.isArray(data[proprety])){
                     var tempNode = currentNode;
                     listData.nodes.push({id: currentNode, label: proprety});
@@ -65,15 +74,18 @@ bubbleController.directive('showBubbles', ['$http', function($http) {
                     listData.createLinks(tempNode, subLinks);
                 }
                 else if (listData.isObject(data[proprety])){
+                    console.log(proprety);
                     var tNode = currentNode;
                     listData.nodes.push({id: currentNode, label: proprety});
                     numList.push(tNode);
                     currentNode++;
                     var sLinks = listData.getObjectArray(data[proprety]);
+                    console.log(data[proprety]);
+                    console.log(tNode);
+                    console.log(sLinks);
                     listData.createLinks(tNode, sLinks);
                 }
                 else{
-                    console.log(proprety);
                     numList.push(currentNode);
                     listData.nodes.push({id: currentNode, label: proprety});
                     currentNode++;
