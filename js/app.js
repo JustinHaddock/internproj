@@ -7,10 +7,14 @@ var myApp = angular.module('internApp', [
 myApp.config(['$routeProvider', function($routeProvider) {
 	$routeProvider.
 	when('/home', {
-		controller: 'jsonController as jCont'
+		templateUrl: 'partials/edit.html'
+	}).
+	when('/collect', {
+		templateUrl: 'partials/buildData.html',
+		controller: 'dataController as data'
 	}).
 	when('/display/:projNum', {
-		controller: 'garbageController as garbage'
+		templateUrl: 'partials/show.html'
 	}).
 	otherwise({
 		redirectTo: '/home'

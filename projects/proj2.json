@@ -4,13 +4,58 @@
             "Arnold Schwarzenegger": {
                 "weapons": [
                     {
-                        "sexiness": "2"
+                        "looks": "2"
                     },
                     {
                         "being huge": "2"
                     },
                     {
                         "cigars": "2"
+                    }
+                ]
+            }
+        },
+        {
+            "Shane Black": {
+                "weapons": [
+                    {
+                        "accent": "2"
+                    },
+                    {
+                        "DYEL": "2"
+                    },
+                    {
+                        "rifle": "2"
+                    }
+                ]
+            }
+        },
+        {
+            "Carl Weathers": {
+                "weapons": [
+                    {
+                        "Moustache": "2"
+                    },
+                    {
+                        "muscles": "2"
+                    },
+                    {
+                        "handshake": "2"
+                    }
+                ]
+            }
+        },
+        {
+            "Predator": {
+                "weapons": [
+                    {
+                        "lasers": "2"
+                    },
+                    {
+                        "Heat sensing": "2"
+                    },
+                    {
+                        "Wrist blades": "2"
                     }
                 ]
             }

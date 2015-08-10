@@ -87,7 +87,17 @@ body  {
   line-height: 160%;
   *zoom: 1;
 }
+section.left{
+  width:50%;
+  float:left;
+  height:100%;
+}
 
+section.right{
+  width:50%;
+  float:right;
+  text-align:left;
+}
 #mynetwork {
   width: 600px;
   height: 400px;

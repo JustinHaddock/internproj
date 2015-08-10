@@ -1,0 +1,10 @@
+<section>
+	<h3> Choose parent/child tasks </h3>
+	<div ng-repeat="node in nodeC.names track by $index">
+		<p> <input type="checkbox" ng-model="node.selected"> {{node.name}}</p>
+		<h3>{{nodeC.boolValues[name]}}</h3>
+	</div>
+	<div>
+		<button ng-click="nodeC.storeRelations()">Submit</button>
+	</div>
+</section>

@@ -1,0 +1,20 @@
+<section class="left">
+	<div class="data-left">
+		<h1> Add Data </h1>
+		<h3> Name </h3> <input style="width: 50%;" type="text" ng-model="data.dpName">
+		<h3> Importance </h3> <input style="width: 50%;" type="text" ng-model="data.dpImp">
+		<h3> Effort </h3> <input style="width: 50%;" type="text" ng-model="data.dpEff">
+		<h3> Relations
+		{{data.printRelations()}}
+		 </h3> <button ng-click="data.getRelations()"> getRelations </button>
+	</br>
+	</br>
+	</br>
+		<button ng-click="data.addNode()"> add </button>
+	</div>
+</section>
+
+
+<section class="right">
+	<button ng-click="data.openVisual()">open Visual</button>
+</section>

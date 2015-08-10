@@ -1,145 +1,136 @@
-var bubbleController = angular.module('bubbleController', []);
+var bubbleController = angular.module('bubbleController', ['ngDialog']);
+
+bubbleController.factory("dataStorage", function() {
+    var dataS = {};
+    dataS.nodes = [];
+    dataS.edges = [];
+    dataS.relations = [];
+    dataS.nodeId = 0;
+    dataS.addNode = function(nam, impor, effor){
+        dataS.nodes.push({
+            id: dataS.nodeId,
+            label: nam,
+            //importance: impor,
+            //effort: effor
+        });
+        dataS.nodeId ++;
+    };
+    dataS.addEdge = function(origin, target){
+        dataS.edges.push({
+            to: origin,
+            from: target
+        });
+    };
+    dataS.getNodes = function(){
+        return dataS.nodes;
+    };
+
+    dataS.getEdges = function(){
+        return dataS.edges;
+    }
+    return dataS
+})
 
 
-bubbleController.directive('showBubbles', ['$http', function($http) {
+bubbleController.controller('dataController', ['$scope', 'ngDialog', 'dataStorage', function($scope, ngDialog, dataStorage) {
+    this.dpName = "";
+    this.dpImp = "";
+    this.dpEff = "";
+    $scope.relations = [];
+
+    this.printRelations = function(){
+        var ret = $scope.relations;
+        return ret;
+    }
+    this.addNode = function(){
+        dataStorage.addNode(this.dpName, this.dpImp, this.dpEff);
+        this.setRelations();
+        this.dpName = "";
+        this.dpImp = "";
+        this.dpEff = "";
+    };
+    this.getRelations = function(){
+        $scope.dpName = this.dpName;
+        $scope.dpImp = this.dpImp;
+        $scope.dpEff = this.dpEff;
+        ngDialog.openConfirm({
+            className: 'ngdialog-theme-default',
+            template: 'partials/getSelections.html',
+            controller: 'nodeController as nodeC',
+            scope: $scope
+        })
+    };
+    this.openVisual = function() {
+        console.log("WTF");
+        ngDialog.openConfirm({
+            className: 'ngdialog-theme-default',
+            template: 'partials/showBubbles.html'
+        })
+    };
+    this.setRelations = function(){
+        for (var i = 0; i < $scope.relations.length; i++){
+            var num = $scope.relations[i];
+            dataStorage.addEdge(dataStorage.nodeId+1, num);
+        }
+        $scope.relations.length = 0;
+        console.log(dataStorage.nodes);
+        console.log(dataStorage.edges);
+    }
+
+}]);
+
+bubbleController.controller('nodeController', ['dataStorage', '$scope', function(dataStorage, $scope){
+    this.names = [];
+    this.getNames = function(){
+        var nameList = [];
+        nodeList = dataStorage.getNodes();
+        for (var i = 0; i < nodeList.length; i++){
+            nameList.push({
+                name: nodeList[i].label,
+                id: nodeList[i].id,
+                selected: false
+            });
+        }
+        this.names = nameList;
+    };
+    this.storeRelations = function() {
+        $scope.relations.length = 0;
+        for (var i = 0; i < this.names.length; i++){
+            if (this.names[i].selected){
+                $scope.relations.push(this.names[i].id);
+            }
+        }
+        $scope.closeThisDialog(0);
+    }
+    this.getNames();
+}])
+
+
+bubbleController.directive('showBubbles', ['$http', 'dataStorage', function($http, dataStorage) {
     var Controller;
 
     Controller = function () {
         var listData = this;
-        var currentNode = 0;
-        listData.nodes = [];
-        listData.edges = [];
+        listData.nodes = dataStorage.getNodes();
+        listData.edges = dataStorage.getEdges();
+        console.log(listData.nodes);
+        console.log(listData.edges);
 
         listData.open = (function() {
-            var pj = 2;
-            listData.jsonList = [];
-            var path = "projects/proj" + pj + ".json";
-            var gephiJSON = loadJSON(path)
-            var parserOptions = {
-                edges: {
-                    inheritColors: false
-                },
-                nodes: {
-                    fixed: true,
-                    parseColor: false
-                }
-            }
-            var parsed = vis.network.convertGephi(gephiJSON, parserOptions);
-            var data = {
-                nodes: parsed.nodes,
-                edges: parsed.edges
-            }
 
-            var container = document.getElementById('mynetwork');
-
-            var network = new vis.Network(container, data);
-                // listData.makeGraph(data.data);
-        })();
-        
-        listData.makeGraph = function(data){
-            for (item in data){
-                if (listData.isObject(data[item])){
-                    listData.nodes.push({id: currentNode, label: data[item]});
-                    currentNode += 1;
-                }
-                else if (listData.isArray(data[item])){
-                    var preNode = currentNode;
-                    listData.nodes.push({id: currentNode, label: item});
-                    currentNode ++;
-                    subLinks = listData.getSubtaskArray(data[item]);
-                    listData.createLinks(preNode, subLinks);
-                }
-                else{
-                    listData.nodes.push({id: currentNode, label: item});
-                    currentNode += 1;
-                }
-            }
-            console.log(listData.edges);
-            console.log(listData.nodes);
-            listData.finishUp();
-        };
-        listData.createLinks = function(beginnin, to){
-            for (var i = 0; i < to.length; i++){
-                listData.edges.push({from: beginnin, to: to[i]});
-            }
-        };
-        listData.getObjectArray = function(data){
-            var numList = [];
-            for (proprety in data){
-                if (listData.isArray(data[proprety])){
-                    var tempNode = currentNode;
-                    listData.nodes.push({id: currentNode, label: proprety});
-                    currentNode++;
-                    subLinks = listData.getSubtaskArray(data[proprety]);
-                    listData.createLinks(tempNode, subLinks);
-                }
-                else if (listData.isObject(data[proprety])){
-                    console.log(proprety);
-                    var tNode = currentNode;
-                    listData.nodes.push({id: currentNode, label: proprety});
-                    numList.push(tNode);
-                    currentNode++;
-                    var sLinks = listData.getObjectArray(data[proprety]);
-                    console.log(data[proprety]);
-                    console.log(tNode);
-                    console.log(sLinks);
-                    listData.createLinks(tNode, sLinks);
-                }
-                else{
-                    numList.push(currentNode);
-                    listData.nodes.push({id: currentNode, label: proprety});
-                    currentNode++;
-                }
-
-            }
-            return numList;
-        };
-        listData.getSubtaskArray = function(data){
-            var numList = [];
-            for (item in data){
-                if (listData.isObject(data[item])){
-                    moreNum = listData.getObjectArray(data[item]);
-                    for (var i = 0; i < moreNum.length; i++){
-                        numList.push(moreNum[i]);
-                    }
-                }
-                else if (listData.isArray(data[item])){
-                    listData.nodes.push({id: currentNode, label: item});
-                    var preNode = currentNode;
-                    currentNode ++;
-                    subLinks = listData.getSubtaskArray(data[item]);
-                    listData.createLinks(preNode, subLinks);
-                }
-                else{
-                    console.log(item);
-                    numList.push(currentNode);
-                    listData.nodes.push({id: currentNode, label: data[item]})
-                    currentNode ++;
-                }
-            }
-            return numList;
-        };
-
-        listData.isObject = function (value) {
-            return value.constructor === Object
-        };
-
-        listData.isArray = function(value) {
-            return value.constructor === Array
-        };
-
-        listData.finishUp = function(){
             var container = document.getElementById('mynetwork');
 
             var data = {
                 nodes: listData.nodes,
                 edges: listData.edges
             };
-            var options = {};
+            var options = {
+                height: '100%',
+                width: '100%'
+            };
 
             var network = new vis.Network(container, data, options);
-        }
-
+        })();
         return listData;
     };
 
@@ -148,18 +139,10 @@ bubbleController.directive('showBubbles', ['$http', function($http) {
         controller: Controller,
         controllerAs: 'listData',
         scope: true,
-        bindToController: {
-            list: "="
-        },
+        // bindToController: {
+        //     list: "="
+        // },
         template: 
         "<div id='mynetwork'></div>"
     }
 }]);
-
-
-
-    // $scope.save = function() {
-    //     $http.post('example.json', $scope.json).then(function(data) {
-    //         console.log("data saved");
-    //     });
-    // };
