@@ -2,12 +2,13 @@ var bubbleController = angular.module('bubbleController', ['ngDialog']);
 
 bubbleController.factory("dataStorage", function() {
     var dataS = {};
-    dataS.nodes = [];
-    dataS.edges = [];
+    dataS.nodes = new vis.DataSet();
+    dataS.edges = new vis.DataSet();
     dataS.relations = [];
     dataS.nodeId = 0;
+    dataS.edgeId = 0;
     dataS.addNode = function(nam, impor, effor){
-        dataS.nodes.push({
+        dataS.nodes.add({
             id: dataS.nodeId,
             label: nam,
             //importance: impor,
@@ -16,10 +17,12 @@ bubbleController.factory("dataStorage", function() {
         dataS.nodeId ++;
     };
     dataS.addEdge = function(origin, target){
-        dataS.edges.push({
+        dataS.edges.add({
+            id: dataS.edgeId,
             to: origin,
             from: target
         });
+        dataS.edgeId++;
     };
     dataS.getNodes = function(){
         return dataS.nodes;
@@ -36,6 +39,7 @@ bubbleController.controller('dataController', ['$scope', 'ngDialog', 'dataStorag
     this.dpName = "";
     this.dpImp = "";
     this.dpEff = "";
+    this.dpId = null;
     $scope.relations = [];
 
     this.printRelations = function(){
@@ -43,7 +47,7 @@ bubbleController.controller('dataController', ['$scope', 'ngDialog', 'dataStorag
         return ret;
     }
     this.addNode = function(){
-        dataStorage.addNode(this.dpName, this.dpImp, this.dpEff);
+        dataStorage.addNode(this.dpName, this.dpImp, this.dpEff, this.dpId);
         this.setRelations();
         this.dpName = "";
         this.dpImp = "";
@@ -60,21 +64,12 @@ bubbleController.controller('dataController', ['$scope', 'ngDialog', 'dataStorag
             scope: $scope
         })
     };
-    this.openVisual = function() {
-        console.log("WTF");
-        ngDialog.openConfirm({
-            className: 'ngdialog-theme-default',
-            template: 'partials/showBubbles.html'
-        })
-    };
     this.setRelations = function(){
         for (var i = 0; i < $scope.relations.length; i++){
             var num = $scope.relations[i];
-            dataStorage.addEdge(dataStorage.nodeId+1, num);
+            dataStorage.addEdge(dataStorage.nodeId-1, num);
         }
         $scope.relations.length = 0;
-        console.log(dataStorage.nodes);
-        console.log(dataStorage.edges);
     }
 
 }]);
@@ -83,7 +78,7 @@ bubbleController.controller('nodeController', ['dataStorage', '$scope', function
     this.names = [];
     this.getNames = function(){
         var nameList = [];
-        nodeList = dataStorage.getNodes();
+        nodeList = dataStorage.getNodes().get();
         for (var i = 0; i < nodeList.length; i++){
             nameList.push({
                 name: nodeList[i].label,
@@ -111,18 +106,16 @@ bubbleController.directive('showBubbles', ['$http', 'dataStorage', function($htt
 
     Controller = function () {
         var listData = this;
-        listData.nodes = dataStorage.getNodes();
-        listData.edges = dataStorage.getEdges();
-        console.log(listData.nodes);
-        console.log(listData.edges);
 
         listData.open = (function() {
 
             var container = document.getElementById('mynetwork');
+            //Doesn't get the element for some reason
+
 
             var data = {
-                nodes: listData.nodes,
-                edges: listData.edges
+                nodes: dataStorage.getNodes(),
+                edges: dataStorage.getEdges()
             };
             var options = {
                 height: '100%',
