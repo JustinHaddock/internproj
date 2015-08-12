@@ -34,31 +34,16 @@ bubbleController.directive('showBubbles', ['$http', function($http) {
               return "#FF9999";
               break;
             case '2':
-              return "#FF8080";
-              break;
-            case '3':
               return "#FF6666";
               break;
-            case '4':
-              return "#FF4D4D";
-              break;
-            case '5':
+            case '3':
               return "#FF3333";
               break;
-            case '6':
-              return "#FF1919";
-              break;
-            case '7':
-              return "#E60000";
-              break;
-            case '8':
-              return "#B20000";
-              break;
-            case '9':
-              return "#800000";
+            case '4':
+              return "#FF0000";
               break;
             default:
-              return "#660000";
+              return "#CC0000";
               break;
           }
         }
@@ -86,8 +71,6 @@ bubbleController.directive('showBubbles', ['$http', function($http) {
                         document.getElementById('operation').innerHTML = "Edit Node";
                         document.getElementById('node-label').value = data.label;
                         document.getElementById('node-size').value = data.size;
-
-                        ze;
                         document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
                         document.getElementById('cancelButton').onclick = cancelEdit.bind(this, callback);
                         document.getElementById('network-popUp').style.display = 'block';

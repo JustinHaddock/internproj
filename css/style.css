@@ -318,8 +318,8 @@ input[type="tel"] {
 #network-popUp {
   display:none;
   position:absolute;
-  top:350px;
-  left:170px;
+  top:150px;
+  left:150px;
   z-index:299;
   width:250px;
   height:140px;
