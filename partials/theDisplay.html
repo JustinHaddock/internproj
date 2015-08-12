@@ -1,35 +1,48 @@
-<div id='network-popUp'>
-    <span id='operation'>node</span>
-    <br>
-    <table style='margin:auto;'>
-        <tr>
-            <td>label</td>
-            <td>
-                <input id='node-label' value='new value' />
-            </td>
-        </tr>
-        <tr>
-            <td>Importance</td>
-            <td>
-                <input id='node-size' value='50' />
-            </td>
-        </tr>
-        <tr>
-            <td>Duration</td>
-            <td>
-
-                <select id='node-color'>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
-            </td>
-        </tr>
-    </table>
-    <input type='button' value='save' id='saveButton' />
-    <input type='button' value='cancel' id='cancelButton' />
-</div>
-<br />
-<div id='mynetwork'></div>
+<section class="left">
+  <h1>The Data</h1>
+  <h3>{{nodes}}</h3>
+  <h3>{{edges}}</h3>
+</section>
+<section class="right">
+  <h1>The Visual</h1>
+  <div id='network-popUp'>
+      <span id='operation'>node</span>
+      <br>
+      <table style='margin:auto;'>
+          <tr>
+              <td>label</td>
+              <td>
+                  <input id='node-label' value='new value' />
+              </td>
+          </tr>
+          <tr>
+              <td>Duration</td>
+              <td>
+                  <select id='node-size'>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                    <option value="50">50</option>  
+                  </select>
+              </td>
+          </tr>
+          <tr>
+              <td>Importance</td>
+              <td>
+                  <select id='node-color'>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+              </td>
+          </tr>
+      </table>
+      <input type='button' value='save' id='saveButton' />
+      <input type='button' value='cancel' id='cancelButton' />
+  </div>
+  <br />
+  <div id='mynetwork'></div>
+</section>

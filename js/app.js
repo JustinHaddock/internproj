@@ -10,6 +10,7 @@ myApp.config(['$routeProvider', function($routeProvider) {
 		templateUrl: 'partials/edit.html'
 	}).
 	when('/collect', {
+		controller: 'dataController',
 		templateUrl: 'partials/buildData.html'
 	}).
 	when('/display/:projNum', {

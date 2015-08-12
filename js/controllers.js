@@ -1,8 +1,41 @@
 var bubbleController = angular.module('bubbleController', ['ngDialog']);
 
+bubbleController.factory("dataStorage", function() {
+    var dataS = {};
+    dataS.nodes = new vis.DataSet();
+    dataS.edges = new vis.DataSet();
+    var toUpdate = null;
 
+    dataS.addNode = function(data) {
+        dataS.nodes.add(data);
+        dataS.nodeId++;
+        console.log(dataS.nodes.get());
+    };
+    dataS.addEdge = function(edge) {
+        dataS.edges.add(edge);
+        dataS.edgeId++;
+    };
+    dataS.getNodes = function() {
+        return dataS.nodes.get();
+    };
 
-bubbleController.directive('showBubbles', ['$http', function($http) {
+    dataS.getEdges = function() {
+        return dataS.edges.get();
+    }
+    return dataS
+});
+
+bubbleController.controller('dataController', ['$scope', 'dataStorage', function($scope, dataStorage){
+  $scope.nodes = dataStorage.getNodes();
+  $scope.edges = dataStorage.getEdges();
+  $scope.$watch(function () {return dataStorage.nodes}, function (newVal, oldVal){
+    if (typeof newVal !== 'undefined') {
+        $scope.nodes = dataStorage.nodes.get();
+    }
+  })
+}])
+
+bubbleController.directive('showBubbles',['$http', 'dataStorage', function($http, dataStorage) {
     var Controller;
 
     Controller = function() {
@@ -25,27 +58,29 @@ bubbleController.directive('showBubbles', ['$http', function($http) {
             data.label = document.getElementById('node-label').value;
             data.size = parseInt(document.getElementById('node-size').value);
             data.color = getColor(document.getElementById('node-color').value);
+            data.shape = 'dot';
             clearPopUp();
             callback(data);
         }
-        function getColor(importance){
-          switch(importance) {
-            case '1':
-              return "#FF9999";
-              break;
-            case '2':
-              return "#FF6666";
-              break;
-            case '3':
-              return "#FF3333";
-              break;
-            case '4':
-              return "#FF0000";
-              break;
-            default:
-              return "#CC0000";
-              break;
-          }
+
+        function getColor(importance) {
+            switch (importance) {
+                case '1':
+                    return "#FF9999";
+                    break;
+                case '2':
+                    return "#FF6666";
+                    break;
+                case '3':
+                    return "#FF3333";
+                    break;
+                case '4':
+                    return "#FF0000";
+                    break;
+                default:
+                    return "#CC0000";
+                    break;
+            }
         }
         listData.open = (function() {
             nodes = [];
@@ -61,7 +96,6 @@ bubbleController.directive('showBubbles', ['$http', function($http) {
                         document.getElementById('operation').innerHTML = "Add Node";
                         document.getElementById('node-label').value = data.label;
                         document.getElementById('node-size').value = data.size;
-                        console.log(callback);
                         document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
                         document.getElementById('cancelButton').onclick = clearPopUp.bind();
                         document.getElementById('network-popUp').style.display = 'block';
@@ -98,9 +132,6 @@ bubbleController.directive('showBubbles', ['$http', function($http) {
         controller: Controller,
         controllerAs: 'listData',
         scope: true,
-        // bindToController: {
-        //     list: "="
-        // },
         templateUrl: "partials/theDisplay.html"
     }
 }]);

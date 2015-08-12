@@ -30,7 +30,6 @@ img.icon {
     top:-2px;
 }
 
-
 div.navbar-wrapper {
     background-color:#07508E;
     border-bottom: 3px solid #ffffff;
@@ -47,7 +46,6 @@ div.blogHeader {
     color:#ffffff;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 1);
     margin-bottom:60px;
-
 }
 
 div.full {
@@ -118,7 +116,6 @@ a code {
 
 tr.hidden {
     max-height:0;
-    /*max-height: 0;*/
     overflow: hidden;
 }
 
