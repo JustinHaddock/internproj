@@ -1,4 +1,6 @@
 var bubbleController = angular.module('bubbleController', ['ngDialog']);
+//var ref = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com");
+
 
 bubbleController.factory("dataStorage", function() {
     var dataS = {};
@@ -15,6 +17,7 @@ bubbleController.factory("dataStorage", function() {
         dataS.edges.add(edge);
         dataS.edgeId++;
     };
+
     dataS.getNodes = function() {
         return dataS.nodes.get();
     };
@@ -28,11 +31,11 @@ bubbleController.factory("dataStorage", function() {
 bubbleController.controller('dataController', ['$scope', 'dataStorage', function($scope, dataStorage){
   $scope.nodes = dataStorage.getNodes();
   $scope.edges = dataStorage.getEdges();
-  $scope.$watch(function () {return dataStorage.nodes}, function (newVal, oldVal){
-    if (typeof newVal !== 'undefined') {
-        $scope.nodes = dataStorage.nodes.get();
-    }
-  })
+  // $scope.$watch(function () {return dataStorage.nodes}, function (newVal, oldVal){
+  //   if (typeof newVal !== 'undefined') {
+  //       $scope.nodes = dataStorage.nodes.get();
+  //   }
+  // })
 }])
 
 bubbleController.directive('showBubbles',['$http', 'dataStorage', function($http, dataStorage) {
@@ -66,7 +69,7 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', function($http
         function getColor(importance) {
             switch (importance) {
                 case '1':
-                    return "#FF9999";
+                    return "#FF9999";  
                     break;
                 case '2':
                     return "#FF6666";
