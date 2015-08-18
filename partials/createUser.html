@@ -1,0 +1,32 @@
+<div class="search-panel">
+    <div class="content">
+        <div class="title">
+            <h1>Create new account</h1>
+        </div>
+        <div class="border"></div>
+        <h2>Enter new credentials</h2>
+        <div class="searchbox">
+            <table style='margin:auto;'>
+                <tr>
+                    <td>
+                        Email: </td>
+                    <td>
+                        <input type="text" class="input" ng-model="create.email" /> </td>
+                </tr>
+                <tr>
+                    <td>
+                        Password: </td>
+                    <td>
+                        <input type="password" class="input" ng-model="create.pass" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <button ng-click="create.addUser()" style="margin-right: 20px">Submit</button>
+                    </td>
+            </table>
+            {{create.emessage}}
+        </div>
+    </div>
+</div>

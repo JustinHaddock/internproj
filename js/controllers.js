@@ -1,17 +1,21 @@
 var bubbleController = angular.module('bubbleController', ['ngDialog']);
-//var ref = new Firebase("https://<YOUR-FIREBASE-APP>.firebaseio.com");
+var ref = new Firebase("https://bubbleview.firebaseio.com");
 
 
 bubbleController.factory("dataStorage", function() {
     var dataS = {};
     dataS.nodes = new vis.DataSet();
     dataS.edges = new vis.DataSet();
-    var toUpdate = null;
+    var uid = null;
 
     dataS.addNode = function(data) {
-        dataS.nodes.add(data);
-        dataS.nodeId++;
-        console.log(dataS.nodes.get());
+        if (dataS.nodes.getIds().indexOf(data.id) > -1){
+            dataS.nodes.update(data);
+        }
+        else{
+            dataS.nodes.add(data);
+            dataS.nodeId++;
+        }
     };
     dataS.addEdge = function(edge) {
         dataS.edges.add(edge);
@@ -31,15 +35,11 @@ bubbleController.factory("dataStorage", function() {
 bubbleController.controller('dataController', ['$scope', 'dataStorage', function($scope, dataStorage){
   $scope.nodes = dataStorage.getNodes();
   $scope.edges = dataStorage.getEdges();
-  // $scope.$watch(function () {return dataStorage.nodes}, function (newVal, oldVal){
-  //   if (typeof newVal !== 'undefined') {
-  //       $scope.nodes = dataStorage.nodes.get();
-  //   }
-  // })
 }])
 
-bubbleController.directive('showBubbles',['$http', 'dataStorage', function($http, dataStorage) {
+bubbleController.directive('showBubbles',['$http', 'dataStorage', '$firebaseArray', '$location', function($http, dataStorage, $firebaseArray, $location) {
     var Controller;
+    var userData = $firebaseArray(ref);
 
     Controller = function() {
         var listData = this;
@@ -57,11 +57,21 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', function($http
             callback(null);
         }
 
+        function backup(nodes, edges){
+            var uid = dataStorage.uid;
+            ref.child(uid).set({
+                "nodes": nodes,
+                "edges": edges
+            })
+        }
+
         function saveData(data, callback) {
             data.label = document.getElementById('node-label').value;
             data.size = parseInt(document.getElementById('node-size').value);
             data.color = getColor(document.getElementById('node-color').value);
             data.shape = 'dot';
+            dataStorage.addNode(data);
+            backup(dataStorage.getNodes(), dataStorage.getEdges());
             clearPopUp();
             callback(data);
         }
@@ -86,8 +96,26 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', function($http
             }
         }
         listData.open = (function() {
-            nodes = [];
-            edges = [];
+
+            var nodes = [];
+            var edges = []; 
+
+            if (dataStorage.uid == null){
+                $location.path('/home');
+            }
+            else{
+                var datum = userData.$getRecord(dataStorage.uid);
+                if (datum != null){
+                    console.log(datum);
+                    nodes = datum.nodes;
+                    if (datum.edges == null){
+                        edges = []
+                    }
+                    else{
+                        edges = datum.edges;
+                    }
+                }
+            }
 
             var container = document.getElementById('mynetwork');
             //Doesn't get the element for some reason
@@ -97,8 +125,9 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', function($http
                     addNode: function(data, callback) {
                         // filling in the popup DOM elements
                         document.getElementById('operation').innerHTML = "Add Node";
-                        document.getElementById('node-label').value = data.label;
-                        document.getElementById('node-size').value = data.size;
+                        document.getElementById('node-label').value = "Task";
+                        document.getElementById('node-size').value = 10;
+                        document.getElementById('node-color').value = 1;
                         document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
                         document.getElementById('cancelButton').onclick = clearPopUp.bind();
                         document.getElementById('network-popUp').style.display = 'block';
@@ -108,6 +137,7 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', function($http
                         document.getElementById('operation').innerHTML = "Edit Node";
                         document.getElementById('node-label').value = data.label;
                         document.getElementById('node-size').value = data.size;
+                        document.getElementById('node-color').value = data.color;
                         document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
                         document.getElementById('cancelButton').onclick = cancelEdit.bind(this, callback);
                         document.getElementById('network-popUp').style.display = 'block';
@@ -116,15 +146,34 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', function($http
                         if (data.from == data.to) {
                             var r = confirm("Do you want to connect the node to itself?");
                             if (r == true) {
+                                dataStorage.addEdge({
+                                    to: data.to,
+                                    from: data.from
+                                })
                                 callback(data);
                             }
                         } else {
+                            dataStorage.addEdge({
+                                to: data.to,
+                                from: data.from
+                            })
                             callback(data);
+                            backup(dataStorage.getNodes(), dataStorage.getEdges());
                         }
                     }
                 }
             };
-
+            for (var i = 0; i < nodes.length; i++){
+                dataStorage.addNode(nodes[i]);
+            }
+            console.log(edges);
+            for (var i = 0; i < edges.length; i++){
+                dataStorage.addEdge(edges[i]);
+            }
+            var data = {
+                nodes: nodes,
+                edges: edges
+            }
             var network = new vis.Network(container, data, options);
         })();
         return listData;

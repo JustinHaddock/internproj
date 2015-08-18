@@ -1,0 +1,35 @@
+<div class="sidebar">
+    <div class="search-panel">
+        <div class="content">
+            <div class="title">
+                <h1>Welcome To BubbleView</h1>
+            </div>
+            <div class="border"></div>
+            <h2>Please login</h2>
+            <div class="searchbox">
+                <table style='margin:auto;width:90%'>
+                    <tr>
+                        <td>
+                            Email: </td>
+                        <td>
+                            <input type="text" class="input" ng-model="login.email" /> </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Password: </td>
+                        <td>
+                            <input type="password" class="input" ng-model="login.pass" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <button ng-click="login.createDialog()" style="float: left;">Create Account</button>
+                            <button ng-click="login.loginUser()">Submit</button>
+                        </td>
+                </table>
+            </div>
+            {{login.emessage}}
+        </div>
+    </div>
+</div>

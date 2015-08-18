@@ -1,13 +1,15 @@
 var myApp = angular.module('internApp', [
 	'ngRoute',
-	'bubbleController'
+	'bubbleController',
+	'userController'
 ])
 
 
 myApp.config(['$routeProvider', function($routeProvider) {
 	$routeProvider.
 	when('/home', {
-		templateUrl: 'partials/edit.html'
+		controller: 'userManagement as login',
+		templateUrl: 'partials/home.html'
 	}).
 	when('/collect', {
 		controller: 'dataController',
