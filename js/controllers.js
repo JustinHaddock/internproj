@@ -64,8 +64,17 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', '$firebaseArra
                 "edges": edges
             })
         }
-
+        function deleteStuff(data){
+            for (var i = 0; i < data.nodes.length; i++){
+                dataStorage.nodes.remove(data.nodes[i]);
+            }
+            for (var i = 0; i < data.edges.length; i++){
+                dataStorage.edges.remove(data.edges[i]);
+            }
+            backup(dataStorage.getNodes(), dataStorage.getEdges());
+        }
         function saveData(data, callback) {
+            console.log(data);
             data.label = document.getElementById('node-label').value;
             data.size = parseInt(document.getElementById('node-size').value);
             data.color = getColor(document.getElementById('node-color').value);
@@ -141,6 +150,14 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', '$firebaseArra
                         document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
                         document.getElementById('cancelButton').onclick = cancelEdit.bind(this, callback);
                         document.getElementById('network-popUp').style.display = 'block';
+                    },
+                    deleteNode: function(data, callback) {
+                        deleteStuff(data);
+                        callback(data);
+                    },
+                    deleteEdge: function(data, callback) {
+                        deleteStuff(data);
+                        callback(data);
                     },
                     addEdge: function(data, callback) {
                         if (data.from == data.to) {
