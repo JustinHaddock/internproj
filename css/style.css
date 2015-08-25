@@ -176,7 +176,7 @@ section.left{
     float:left;
     height:100%;
 }
-section.left button{font-family: 'Ropa Sans', sans-serif; text-transform:uppercase;}
+section.left button{width:60px; height:40px; background: center #cf9359;}
 
 
 section.right{

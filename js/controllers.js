@@ -45,7 +45,7 @@ bubbleController.controller('dataController', ['$scope', 'dataStorage', function
 
 }])
 
-bubbleController.directive('showBubbles',['$http', 'dataStorage', '$routeParams', '$firebaseArray', '$location', function($http, dataStorage, $routeParams, $firebaseArray, $location) {
+bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$firebaseArray', '$location', function(dataStorage, $routeParams, $firebaseArray, $location) {
     var Controller;
     var userData = $firebaseArray(ref);
 
@@ -60,7 +60,6 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', '$routeParams'
         var theOptions;
         
         if (dataStorage.uid == null){
-            console.log(dataStorage.uid);
             $location.path('/home');
         }
         
@@ -77,7 +76,6 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', '$routeParams'
 
         function backup(nodes, edges){
             var uid = dataStorage.uid;
-            console.log(ref.child(uid));
             ref.child(uid).child(projNum).set({
                 "nodes": nodes,
                 "edges": edges
@@ -102,13 +100,17 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', '$routeParams'
             }
             network.setOptions(theOptions);
         }
+
         function deleteStuff(data, network){
             var nodeId = data.nodes[0];
             dataStorage.nodes.remove(nodeId);
             setEdges(network);
             backup(dataStorage.getNodes(), dataStorage.getEdges());
         }
-
+        function resetView(){
+            nodesList = network.body.data.nodes.get();
+            $scope.$apply();
+        }
         function saveData(data, callback) {
             var newData = {
                 id: data.id,
@@ -123,6 +125,7 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', '$routeParams'
             backup(dataStorage.getNodes(), dataStorage.getEdges());
             clearPopUp();
             callback(newData);
+            resetView();
         }
 
         function setEdges(network){

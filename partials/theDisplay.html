@@ -43,7 +43,15 @@
   </section>
 </section>
 <section class="left">
-  <button ng-click="listData.resetPanel()" ng-confirm-click="Are you sure?">Reset</button>
-  
-  <button ng-click="listData.togglePhysics()">Toggle Physics</button>
+  <table>
+    <tr>
+      <td>
+        <button ng-click="listData.resetPanel()" ng-confirm-click="Are you sure?">Reset</button>
+      </td>
+      <td>
+        <button ng-click="listData.togglePhysics()">Toggle Physics</button>
+      </td>
+    </tr>
+  </table>
+  {{listData.nodesList}}
 </section>
