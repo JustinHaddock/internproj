@@ -2,8 +2,8 @@ var userController = angular.module('userController', ['firebase', 'ngDialog']);
 var ref = new Firebase("https://bubbleview.firebaseio.com");
 
 userController.controller("userManagement", ['$scope', 'ngDialog', '$location', 'dataStorage', function($scope, ngDialog, $location, dataStorage) {
-    this.email = "DeRegionald@aol.com";
-    this.pass = "Yoyoyo12";
+    this.email = "";
+    this.pass = "";
     this.emessage = "";
 
     this.loginUser = function() {
