@@ -83,7 +83,6 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
         }
 
         listData.resetPanel = function(){
-            console.log("Reset");
             dataStorage.resetAll();
             backup([], []);
             network.setData({
@@ -107,25 +106,30 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
             setEdges(network);
             backup(dataStorage.getNodes(), dataStorage.getEdges());
         }
-        function resetView(){
-            nodesList = network.body.data.nodes.get();
-            $scope.$apply();
-        }
         function saveData(data, callback) {
             var newData = {
                 id: data.id,
                 label: document.getElementById('node-label').value,
                 size: parseInt(document.getElementById('node-size').value),
                 color: getColor(document.getElementById('node-color').value),
-                title: "Effort: " + parseInt(document.getElementById('node-size').value) + "\nImportance: " + parseInt(document.getElementById('node-color').value),
+                unit: document.getElementById('node-unit').value,
+                title: "Effort: " + parseInt(document.getElementById('node-size').value) + " " + document.getElementById('node-unit').value + ", Importance: " + parseInt(document.getElementById('node-color').value),
                 shape: 'dot'
             }
-            dataStorage.nodes.remove(data.id);
+            console.log(newData.unit);
+            if (newData.unit == "Sprints"){
+                newData.size = (newData.size*10);
+            }
+            else{
+                newData.size = (newData.size*2);
+            }
+            if (newData.size > 100){
+                newData.size = 100;
+            }
             dataStorage.addNode(newData);
             backup(dataStorage.getNodes(), dataStorage.getEdges());
             clearPopUp();
             callback(newData);
-            resetView();
         }
 
         function setEdges(network){
@@ -209,6 +213,7 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
                         document.getElementById('node-label').value = "Task";
                         document.getElementById('node-size').value = 10;
                         document.getElementById('node-color').value = 1;
+                        document.getElementById('node-unit').value = "Hours";
                         document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
                         document.getElementById('cancelButton').onclick = clearPopUp.bind();
                         document.getElementById('network-popUp').style.display = 'block';
@@ -218,6 +223,13 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
                         document.getElementById('operation').innerHTML = "Edit Node";
                         document.getElementById('node-label').value = data.label;
                         document.getElementById('node-size').value = data.size;
+                        document.getElementById('node-unit').value = data.unit;
+                        if (data.unit == "Sprints"){
+                            document.getElementById('node-size').value = data.size/10;
+                        }
+                        else{
+                            document.getElementById('node-size').value = data.size/2;   
+                        }
                         document.getElementById('node-color').value = getNumber(data.color.background);
                         document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
                         document.getElementById('cancelButton').onclick = cancelEdit.bind(this, callback);
