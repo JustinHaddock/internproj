@@ -17,10 +17,17 @@ bubbleController.factory("dataStorage", function() {
             dataS.nodeId++;
         }
     };
-    dataS.addEdge = function(edge) {
-        dataS.edges.add(edge);
-        dataS.edgeId++;
+    dataS.resetEdges = function() {
+        dataS.edges = new vis.DataSet();
     };
+
+    dataS.resetAll = function(){
+        dataS.nodes = new vis.DataSet();
+        dataS.edges = new vis.DataSet();
+    }
+    dataS.addEdge = function(edge){
+        dataS.edges.add(edge);
+    }
 
     dataS.getNodes = function() {
         return dataS.nodes.get();
@@ -35,17 +42,28 @@ bubbleController.factory("dataStorage", function() {
 bubbleController.controller('dataController', ['$scope', 'dataStorage', function($scope, dataStorage){
   $scope.nodes = dataStorage.getNodes();
   $scope.edges = dataStorage.getEdges();
+
 }])
 
-bubbleController.directive('showBubbles',['$http', 'dataStorage', '$firebaseArray', '$location', function($http, dataStorage, $firebaseArray, $location) {
+bubbleController.directive('showBubbles',['$http', 'dataStorage', '$routeParams', '$firebaseArray', '$location', function($http, dataStorage, $routeParams, $firebaseArray, $location) {
     var Controller;
     var userData = $firebaseArray(ref);
 
+
     Controller = function() {
         var listData = this;
-        var seed = 2;
         var data;
-
+        var nodes = dataStorage.getNodes();
+        var edges = dataStorage.getEdges();
+        var projNum = $routeParams.projId;
+        var network;
+        var theOptions;
+        
+        if (dataStorage.uid == null){
+            console.log(dataStorage.uid);
+            $location.path('/home');
+        }
+        
         function clearPopUp() {
             document.getElementById('saveButton').onclick = null;
             document.getElementById('cancelButton').onclick = null;
@@ -59,32 +77,81 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', '$firebaseArra
 
         function backup(nodes, edges){
             var uid = dataStorage.uid;
-            ref.child(uid).set({
+            console.log(ref.child(uid));
+            ref.child(uid).child(projNum).set({
                 "nodes": nodes,
                 "edges": edges
             })
         }
-        function deleteStuff(data){
-            for (var i = 0; i < data.nodes.length; i++){
-                dataStorage.nodes.remove(data.nodes[i]);
-            }
-            for (var i = 0; i < data.edges.length; i++){
-                dataStorage.edges.remove(data.edges[i]);
-            }
-            backup(dataStorage.getNodes(), dataStorage.getEdges());
+
+        listData.resetPanel = function(){
+            console.log("Reset");
+            dataStorage.resetAll();
+            backup([], []);
+            network.setData({
+                    nodes: new vis.DataSet(),
+                    edges: new vis.DataSet()
+                });
         }
-        function saveData(data, callback) {
-            console.log(data);
-            data.label = document.getElementById('node-label').value;
-            data.size = parseInt(document.getElementById('node-size').value);
-            data.color = getColor(document.getElementById('node-color').value);
-            data.shape = 'dot';
-            dataStorage.addNode(data);
+        listData.togglePhysics = function(){
+            if (theOptions.physics.enabled){
+                theOptions.physics.enabled = false;
+            }
+            else{
+                theOptions.physics.enabled = true;
+            }
+            network.setOptions(theOptions);
+        }
+        function deleteStuff(data, network){
+            var nodeId = data.nodes[0];
+            dataStorage.nodes.remove(nodeId);
+            setEdges(network);
             backup(dataStorage.getNodes(), dataStorage.getEdges());
-            clearPopUp();
-            callback(data);
         }
 
+        function saveData(data, callback) {
+            var newData = {
+                id: data.id,
+                label: document.getElementById('node-label').value,
+                size: parseInt(document.getElementById('node-size').value),
+                color: getColor(document.getElementById('node-color').value),
+                title: "Effort: " + parseInt(document.getElementById('node-size').value) + "\nImportance: " + parseInt(document.getElementById('node-color').value),
+                shape: 'dot'
+            }
+            dataStorage.nodes.remove(data.id);
+            dataStorage.addNode(newData);
+            backup(dataStorage.getNodes(), dataStorage.getEdges());
+            clearPopUp();
+            callback(newData);
+        }
+
+        function setEdges(network){
+            var edges = network.body.data.edges.get();
+            dataStorage.resetEdges();
+            for (var i = 0; i < edges.length; i++){
+                dataStorage.edges.add(edges[i]);
+            }
+            backup(dataStorage.getNodes(), dataStorage.getEdges());
+        }
+        function getNumber(color) {
+            switch (color) {
+                case '#FF9999':
+                    return "1";  
+                    break;
+                case '#FF6666':
+                    return "2";
+                    break;
+                case '#FF3333':
+                    return "3";
+                    break;
+                case '#FF0000':
+                    return "4";
+                    break;
+                default:
+                    return "5";
+                    break;
+            }
+        }
         function getColor(importance) {
             switch (importance) {
                 case '1':
@@ -108,20 +175,19 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', '$firebaseArra
 
             var nodes = [];
             var edges = []; 
+            dataStorage.resetAll();
 
-            if (dataStorage.uid == null){
-                $location.path('/home');
-            }
-            else{
-                var datum = userData.$getRecord(dataStorage.uid);
-                if (datum != null){
-                    console.log(datum);
-                    nodes = datum.nodes;
-                    if (datum.edges == null){
-                        edges = []
+            
+            var uid = dataStorage.uid;
+            if (userData.$getRecord(uid) != null){
+                thisUser = userData.$getRecord(uid);
+                if (thisUser[projNum] != null){
+                    projectData = thisUser[projNum];
+                    if (projectData.nodes != null){
+                        nodes = projectData.nodes;
                     }
-                    else{
-                        edges = datum.edges;
+                    if (projectData.edges != null){
+                        edges = projectData.edges;
                     }
                 }
             }
@@ -130,6 +196,9 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', '$firebaseArra
             //Doesn't get the element for some reason
 
             var options = {
+                physics: {
+                    enabled: true,
+                },
                 manipulation: {
                     addNode: function(data, callback) {
                         // filling in the popup DOM elements
@@ -146,44 +215,39 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', '$firebaseArra
                         document.getElementById('operation').innerHTML = "Edit Node";
                         document.getElementById('node-label').value = data.label;
                         document.getElementById('node-size').value = data.size;
-                        document.getElementById('node-color').value = data.color;
+                        document.getElementById('node-color').value = getNumber(data.color.background);
                         document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
                         document.getElementById('cancelButton').onclick = cancelEdit.bind(this, callback);
                         document.getElementById('network-popUp').style.display = 'block';
                     },
                     deleteNode: function(data, callback) {
-                        deleteStuff(data);
+                        deleteStuff(data, network);
                         callback(data);
                     },
                     deleteEdge: function(data, callback) {
-                        deleteStuff(data);
                         callback(data);
+                        setEdges(network);
                     },
                     addEdge: function(data, callback) {
+                        // data.arrows = {
+                        //     to: true
+                        // }
                         if (data.from == data.to) {
                             var r = confirm("Do you want to connect the node to itself?");
                             if (r == true) {
-                                dataStorage.addEdge({
-                                    to: data.to,
-                                    from: data.from
-                                })
                                 callback(data);
                             }
                         } else {
-                            dataStorage.addEdge({
-                                to: data.to,
-                                from: data.from
-                            })
                             callback(data);
-                            backup(dataStorage.getNodes(), dataStorage.getEdges());
                         }
+                        setEdges(network);
                     }
                 }
             };
+            theOptions = options;
             for (var i = 0; i < nodes.length; i++){
                 dataStorage.addNode(nodes[i]);
             }
-            console.log(edges);
             for (var i = 0; i < edges.length; i++){
                 dataStorage.addEdge(edges[i]);
             }
@@ -191,7 +255,7 @@ bubbleController.directive('showBubbles',['$http', 'dataStorage', '$firebaseArra
                 nodes: nodes,
                 edges: edges
             }
-            var network = new vis.Network(container, data, options);
+            network = new vis.Network(container, data, options);
         })();
         return listData;
     };

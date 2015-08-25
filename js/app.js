@@ -11,12 +11,12 @@ myApp.config(['$routeProvider', function($routeProvider) {
 		controller: 'userManagement as login',
 		templateUrl: 'partials/home.html'
 	}).
-	when('/collect', {
+	when('/collect/:projId', {
 		controller: 'dataController',
 		templateUrl: 'partials/buildData.html'
 	}).
-	when('/display/:projNum', {
-		templateUrl: 'partials/show.html'
+	when('/projects', {
+		templateUrl: 'partials/projectChoose.html'
 	}).
 	otherwise({
 		redirectTo: '/home'
