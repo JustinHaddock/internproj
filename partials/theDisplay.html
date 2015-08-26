@@ -1,13 +1,13 @@
 <section class="right">
   <section class="bubbleDisplay">
-    <h1>The Visual</h1>
+    <h1>{{listData.getProjName()}}</h1>
     <div id='network-popUp'>
         <span id="operation">node</span> <br>
         <table style='margin:auto;'>
             <tr>
                 <td>Label</td>
                 <td>
-                    <input id='node-label' value='new value' />
+                    <input style="width:50%" id='node-label' value='new value' />
                 </td>
             </tr>
             <tr>
@@ -51,5 +51,4 @@
       </td>
     </tr>
   </table>
-  {{listData.nodesList}}
 </section>

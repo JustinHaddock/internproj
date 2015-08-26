@@ -5,31 +5,34 @@
     <div class="panel marRight30">
       <div class="img"><img src="images/proj_1.jpg"/></div>
       <div class="title">
-        <h1>Project 1</h1>
+        <h1>{{choice.getName(0)}}</h1>
       </div>
       <div class="border"></div>
       <div class="content">
-        <div class="button-link"><a href="#/collect/1">Let's Go!</a></div>
+        <div class="button-link" ng-click="choice.loadName(0)"><a href="#/collect/1">Let's Go!</a></div>
+        <button ng-click="choice.changeName(1)">Change Name</button>
       </div>
     </div>
     <div class="panel marRight30">
       <div class="img"><img src="images/proj_2.jpg"/></div>
       <div class="title">
-        <h1 class="border-bottom">Project 2</h1>
+        <h1 class="border-bottom">{{choice.getName(1)}}</h1>
       </div>
       <div class="border"></div>
       <div class="content">
-        <div class="button-link"><a href="#/collect/2">Let's Go!</a></div>
+        <div class="button-link" ng-click="choice.loadName(1)"><a href="#/collect/2">Let's Go!</a></div>
+        <button ng-click="choice.changeName(2)">Change Name</button>
       </div>
     </div>
     <div class="panel">
       <div class="img"><img src="images/proj_3.jpg"/></div>
       <div class="title">
-        <h1 class="border-bottom">Project 3</h1>
+        <h1 class="border-bottom">{{choice.getName(2)}}</h1>
       </div>
       <div class="border"></div>
       <div class="content">
-        <div class="button-link"><a href="#/collect/3">Let's Go!</a></div>
+        <div class="button-link" ng-click="choice.loadName(2)"><a href="#/collect/3">Let's Go!</a></div>
+        <button ng-click="choice.changeName(3)">Change Name</button>
       </div>
     </div>
   </div>

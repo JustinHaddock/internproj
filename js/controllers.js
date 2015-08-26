@@ -7,6 +7,7 @@ bubbleController.factory("dataStorage", function() {
     dataS.nodes = new vis.DataSet();
     dataS.edges = new vis.DataSet();
     var uid = null;
+    var projName;
 
     dataS.addNode = function(data) {
         if (dataS.nodes.getIds().indexOf(data.id) > -1){
@@ -39,11 +40,6 @@ bubbleController.factory("dataStorage", function() {
     return dataS
 });
 
-bubbleController.controller('dataController', ['$scope', 'dataStorage', function($scope, dataStorage){
-  $scope.nodes = dataStorage.getNodes();
-  $scope.edges = dataStorage.getEdges();
-
-}])
 
 bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$firebaseArray', '$location', function(dataStorage, $routeParams, $firebaseArray, $location) {
     var Controller;
@@ -58,6 +54,18 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
         var projNum = $routeParams.projId;
         var network;
         var theOptions;
+        this.projName;
+
+        // STATISTICS
+        listData.maxSizeSprint;
+        listData.maxSizeHour;
+        listData.numNodes;
+        listData.totalHours;
+        listData.totalSprints;
+
+        //Math divisors
+        var hMult = 2;
+        var sMult = 10;
         
         if (dataStorage.uid == null){
             $location.path('/home');
@@ -73,10 +81,12 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
             clearPopUp();
             callback(null);
         }
-
+        listData.getProjName = function(){
+            return dataStorage.projName
+        }
         function backup(nodes, edges){
             var uid = dataStorage.uid;
-            ref.child(uid).child(projNum).set({
+            ref.child(uid).child(projNum).update({
                 "nodes": nodes,
                 "edges": edges
             })
@@ -116,12 +126,11 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
                 title: "Effort: " + parseInt(document.getElementById('node-size').value) + " " + document.getElementById('node-unit').value + ", Importance: " + parseInt(document.getElementById('node-color').value),
                 shape: 'dot'
             }
-            console.log(newData.unit);
             if (newData.unit == "Sprints"){
-                newData.size = (newData.size*10);
+                newData.size = (newData.size*sMult);
             }
             else{
-                newData.size = (newData.size*2);
+                newData.size = (newData.size*hMult);
             }
             if (newData.size > 100){
                 newData.size = 100;
@@ -196,6 +205,7 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
                     if (projectData.edges != null){
                         edges = projectData.edges;
                     }
+                    this.projName = projectData.name
                 }
             }
 
@@ -211,7 +221,7 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
                         // filling in the popup DOM elements
                         document.getElementById('operation').innerHTML = "Add Node";
                         document.getElementById('node-label').value = "Task";
-                        document.getElementById('node-size').value = 10;
+                        document.getElementById('node-size').value = sMult;
                         document.getElementById('node-color').value = 1;
                         document.getElementById('node-unit').value = "Hours";
                         document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
@@ -225,10 +235,10 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
                         document.getElementById('node-size').value = data.size;
                         document.getElementById('node-unit').value = data.unit;
                         if (data.unit == "Sprints"){
-                            document.getElementById('node-size').value = data.size/10;
+                            document.getElementById('node-size').value = data.size/sMult;
                         }
                         else{
-                            document.getElementById('node-size').value = data.size/2;   
+                            document.getElementById('node-size').value = data.size/hMult;   
                         }
                         document.getElementById('node-color').value = getNumber(data.color.background);
                         document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);

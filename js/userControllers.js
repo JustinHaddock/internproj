@@ -65,12 +65,22 @@ bubbleController.controller("createController", ['$scope', '$firebaseArray', fun
             password: this.pass
         }, function(error, userData) {
             if (error) {
-                console.log(this.uid);
-                this.emessage = error.message;
-                console.log("Error creating user:", error);
+                this.emessage = "Entered email is invalid";
+                console.log(error);
                 $scope.$apply();
             } else {
-                console.log("Successfully created user account with uid:", userData.uid);
+                console.log("Success!");
+                var uid = userData.uid
+
+                ref.child(uid).child("1").update({
+                    "name": "Project 1"
+                })
+                ref.child(uid).child("2").update({
+                    "name": "Project 2"
+                })
+                ref.child(uid).child("3").update({
+                    "name": "Project 3"
+                })
                 $scope.closeThisDialog(0);
             }
         });
