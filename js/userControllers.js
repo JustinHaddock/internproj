@@ -78,7 +78,7 @@ bubbleController.controller("createController", ['$scope', '$firebaseArray', fun
         }, function(error, userData) {
             if (error) {
                 create.emessage = "Entered email is invalid";
-                console.log(create);
+                console.log("This shit don't work");
                 console.log(create.emessage);
                 $scope.$apply();
             } else {
@@ -94,7 +94,7 @@ bubbleController.controller("createController", ['$scope', '$firebaseArray', fun
                 ref.child(uid).child("3").update({
                     "name": "Project 3"
                 })
-                $scope.closecreateDialog(0);
+                $scope.closeThisDialog(0);
             }
         });
     }

@@ -9,11 +9,10 @@ bubbleController.factory("dataStorage", function() {
     var uid = null;
     var projName;
 
-    dataS.addNode = function(data){
-        if (dataS.nodes.getIds().indexOf(data.id) > -1){
+    dataS.addNode = function(data) {
+        if (dataS.nodes.getIds().indexOf(data.id) > -1) {
             dataS.nodes.update(data);
-        }
-        else{
+        } else {
             dataS.nodes.add(data);
             dataS.nodeId++;
         }
@@ -23,11 +22,11 @@ bubbleController.factory("dataStorage", function() {
         dataS.edges = new vis.DataSet();
     };
 
-    dataS.resetAll = function(){
+    dataS.resetAll = function() {
         dataS.nodes = new vis.DataSet();
         dataS.edges = new vis.DataSet();
     }
-    dataS.addEdge = function(edge){
+    dataS.addEdge = function(edge) {
         dataS.edges.add(edge);
     }
 
@@ -42,7 +41,7 @@ bubbleController.factory("dataStorage", function() {
 });
 
 
-bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams', '$firebaseArray', '$location', '$q', function(dataStorage, $routeParams, $route, $firebaseArray, $location, $q) {
+bubbleController.directive('showBubbles', ['dataStorage', '$route', '$routeParams', '$firebaseArray', '$location', '$q', function(dataStorage, $routeParams, $route, $firebaseArray, $location, $q) {
     var Controller;
     var userData = $firebaseArray(ref);
 
@@ -69,7 +68,7 @@ bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams
         //     $location.path('/home');
         // }
         var uid = localStorage.getItem('uid');
-        
+
         function clearPopUp() {
             document.getElementById('saveButton').onclick = null;
             document.getElementById('cancelButton').onclick = null;
@@ -80,23 +79,25 @@ bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams
             clearPopUp();
             callback(null);
         }
-        listData.getProjName = function(){
+        listData.getProjName = function() {
             return dataStorage.projName
         }
-        function backup(nodes, edges){
+
+        function backup(nodes, edges) {
+            var projNum = $routeParams.current.params.projId
             ref.child(uid).child(projNum).update({
                 "nodes": nodes,
                 "edges": edges
             })
         }
 
-        listData.resetPanel = function(){
+        listData.resetPanel = function() {
             dataStorage.resetAll();
             backup([], []);
             network.setData({
-                    nodes: new vis.DataSet(),
-                    edges: new vis.DataSet()
-                });
+                nodes: new vis.DataSet(),
+                edges: new vis.DataSet()
+            });
         }
 
         listData.logoutUser = function() {
@@ -104,22 +105,22 @@ bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams
             ref.unauth();
             $location.path('/home');
         }
-        listData.togglePhysics = function(){
-            if (theOptions.physics.enabled){
+        listData.togglePhysics = function() {
+            if (theOptions.physics.enabled) {
                 theOptions.physics.enabled = false;
-            }
-            else{
+            } else {
                 theOptions.physics.enabled = true;
             }
             network.setOptions(theOptions);
         }
 
-        function deleteStuff(data, network){
+        function deleteStuff(data, network) {
             var nodeId = data.nodes[0];
             dataStorage.nodes.remove(nodeId);
             setEdges(network);
             backup(dataStorage.getNodes(), dataStorage.getEdges());
         }
+
         function saveData(data, callback) {
             var newData = {
                 id: data.id,
@@ -130,13 +131,12 @@ bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams
                 title: "Effort: " + parseInt(document.getElementById('node-size').value) + " " + document.getElementById('node-unit').value + ", Importance: " + parseInt(document.getElementById('node-color').value),
                 shape: 'dot'
             }
-            if (newData.unit == "Sprints"){
-                newData.size = (newData.size*sMult);
+            if (newData.unit == "Sprints") {
+                newData.size = (newData.size * sMult);
+            } else {
+                newData.size = (newData.size * hMult);
             }
-            else{
-                newData.size = (newData.size*hMult);
-            }
-            if (newData.size > 100){
+            if (newData.size > 100) {
                 newData.size = 100;
             }
             dataStorage.addNode(newData);
@@ -145,18 +145,19 @@ bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams
             callback(newData);
         }
 
-        function setEdges(network){
+        function setEdges(network) {
             var edges = network.body.data.edges.get();
             dataStorage.resetEdges();
-            for (var i = 0; i < edges.length; i++){
+            for (var i = 0; i < edges.length; i++) {
                 dataStorage.edges.add(edges[i]);
             }
             backup(dataStorage.getNodes(), dataStorage.getEdges());
         }
+
         function getNumber(color) {
             switch (color) {
                 case '#FF9999':
-                    return "1";  
+                    return "1";
                     break;
                 case '#FF6666':
                     return "2";
@@ -176,7 +177,7 @@ bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams
         function getColor(importance) {
             switch (importance) {
                 case '1':
-                    return "#FF9999";  
+                    return "#FF9999";
                     break;
                 case '2':
                     return "#FF6666";
@@ -192,34 +193,33 @@ bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams
                     break;
             }
         }
-        function getUserData(){
+
+        function getUserData() {
             var deferred = $q.defer();
             var data = $firebaseArray(ref).$loaded(
-                function(data){
+                function(data) {
                     deferred.resolve(data);
                 }
             );
             return deferred.promise
         }
 
-        function getNodeData(userData){
+        function getNodeData(userData) {
             var projNum = $routeParams.current.params.projId
             var allTheData = []
 
-            if (userData.$getRecord(uid) != null){
+            if (userData.$getRecord(uid) != null) {
                 thisUser = userData.$getRecord(uid);
-                if (thisUser[projNum] != null){
+                if (thisUser[projNum] != null) {
                     projectData = thisUser[projNum];
-                    if (projectData.nodes != null){
+                    if (projectData.nodes != null) {
                         allTheData[0] = projectData.nodes;
-                    }
-                    else{
+                    } else {
                         allTheData[0] = [];
                     }
-                    if (projectData.edges != null){
+                    if (projectData.edges != null) {
                         allTheData[1] = projectData.edges;
-                    }
-                    else{
+                    } else {
                         allTheData[1] = [];
                     }
                     this.projName = projectData.name
@@ -228,7 +228,7 @@ bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams
             return allTheData
         }
 
-        function makeTheNetwork(nodes, edges){
+        function makeTheNetwork(nodes, edges) {
 
             dataStorage.resetAll();
 
@@ -256,11 +256,10 @@ bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams
                         document.getElementById('node-label').value = data.label;
                         document.getElementById('node-size').value = data.size;
                         document.getElementById('node-unit').value = data.unit;
-                        if (data.unit == "Sprints"){
-                            document.getElementById('node-size').value = data.size/sMult;
-                        }
-                        else{
-                            document.getElementById('node-size').value = data.size/hMult;   
+                        if (data.unit == "Sprints") {
+                            document.getElementById('node-size').value = data.size / sMult;
+                        } else {
+                            document.getElementById('node-size').value = data.size / hMult;
                         }
                         document.getElementById('node-color').value = getNumber(data.color.background);
                         document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
@@ -292,10 +291,10 @@ bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams
                 }
             };
             theOptions = options;
-            for (var i = 0; i < nodes.length; i++){
+            for (var i = 0; i < nodes.length; i++) {
                 dataStorage.addNode(nodes[i]);
             }
-            for (var i = 0; i < edges.length; i++){
+            for (var i = 0; i < edges.length; i++) {
                 dataStorage.addEdge(edges[i]);
             }
             var data = {
@@ -307,12 +306,12 @@ bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams
 
         listData.open = (function() {
 
-            getUserData().then(function(res){
+            getUserData().then(function(res) {
                 var allTheData = getNodeData(res);
                 nodes = allTheData[0]
                 edges = allTheData[1]
                 makeTheNetwork(nodes, edges);
-                
+
             });
 
         })();
