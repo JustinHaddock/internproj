@@ -18,7 +18,7 @@ userController.controller("userManagement", ['$scope', 'ngDialog', '$location', 
         }
       } else {
         dataStorage.uid = null;
-        $location.path('/home');
+        $location.path('/home'); 
       }
     });
 
