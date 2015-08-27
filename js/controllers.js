@@ -205,6 +205,7 @@ bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams
         function getNodeData(userData){
             var projNum = $routeParams.current.params.projId
             var allTheData = []
+
             if (userData.$getRecord(uid) != null){
                 thisUser = userData.$getRecord(uid);
                 if (thisUser[projNum] != null){
@@ -212,8 +213,14 @@ bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams
                     if (projectData.nodes != null){
                         allTheData[0] = projectData.nodes;
                     }
+                    else{
+                        allTheData[0] = [];
+                    }
                     if (projectData.edges != null){
                         allTheData[1] = projectData.edges;
+                    }
+                    else{
+                        allTheData[1] = [];
                     }
                     this.projName = projectData.name
                 }
