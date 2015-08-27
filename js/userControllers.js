@@ -1,15 +1,32 @@
 var userController = angular.module('userController', ['firebase', 'ngDialog']);
 var ref = new Firebase("https://bubbleview.firebaseio.com");
 
+
 userController.controller("userManagement", ['$scope', 'ngDialog', '$location', 'dataStorage', function($scope, ngDialog, $location, dataStorage) {
     this.email = "";
     this.pass = "";
     this.emessage = "";
 
+    ref.onAuth(function(authData) {
+      if (authData) {
+        dataStorage.uid = authData.uid;
+
+        localStorage.setItem('uid', authData.uid)
+
+        if ($location.path() == '/home'){
+            $location.path('/projects');
+        }
+      } else {
+        dataStorage.uid = null;
+        $location.path('/home');
+      }
+    });
+
     this.loginUser = function() {
         ref.authWithPassword({
             email: this.email,
-            password: this.pass
+            password: this.pass,
+            remember: "default"
         }, function(error, authData) {
             if (error) {
                 console.log("Login Failed!", error);
@@ -17,15 +34,9 @@ userController.controller("userManagement", ['$scope', 'ngDialog', '$location', 
                 $scope.$apply();
             } else {
                 dataStorage.uid = authData.uid;
-                $location.path('/projects');
                 $scope.$apply(); 
             }
         }.bind(this));
-    }
-    
-    this.logoutUser = function() {
-        dataStorage.uid = null;
-        $location.path('/home');
     }
 
     this.deleteUser = function(user, pass) {
@@ -55,18 +66,20 @@ userController.controller("userManagement", ['$scope', 'ngDialog', '$location', 
 }]);
 
 bubbleController.controller("createController", ['$scope', '$firebaseArray', function($scope, $firebaseArray){
-    this.email = $scope.email;
-    this.pass = $scope.password;
-    this.emessage = "";
+    var create = this;
+    create.email = $scope.email;
+    create.pass = $scope.password;
+    create.emessage = "";
 
-    this.addUser = function() {
+    create.addUser = function() {
         ref.createUser({
-            email: this.email,
-            password: this.pass
+            email: create.email,
+            password: create.pass
         }, function(error, userData) {
             if (error) {
-                this.emessage = "Entered email is invalid";
-                console.log(error);
+                create.emessage = "Entered email is invalid";
+                console.log(create);
+                console.log(create.emessage);
                 $scope.$apply();
             } else {
                 console.log("Success!");
@@ -81,10 +94,11 @@ bubbleController.controller("createController", ['$scope', '$firebaseArray', fun
                 ref.child(uid).child("3").update({
                     "name": "Project 3"
                 })
-                $scope.closeThisDialog(0);
+                $scope.closecreateDialog(0);
             }
         });
     }
+    return create;
 
 }])
 

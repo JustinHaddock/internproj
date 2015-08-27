@@ -64,6 +64,7 @@ HEADER CLASSES
 PANEL CLASSES
 -------------------------------------------------*/
 .panel-wrap{width:100%; background:url(../images/pattern-2.jpg); overflow:hidden; margin-top:20px;}
+.panel-wrap button{width:60px; height:40px; float:right; background: center #cf9359;}
 .panel-wrapper{width:960px; margin:0 auto; overflow:hidden; margin-top:60px; padding-bottom:60px;}
 
 .panel-wrapper .panel{width:260px; background:#f3f3ee; float:left; padding:20px;}

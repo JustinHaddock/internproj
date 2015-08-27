@@ -30,6 +30,12 @@ choiceController.controller("projectChooseController", ['dataStorage', 'ngDialog
   		}
   	}
 
+    this.logoutUser = function() {
+        dataStorage.uid = null;
+        ref.unauth();
+        $location.path('/home');
+    }
+
   	this.loadName = function(num){
   		dataStorage.projName = $scope.projNames[num]
   	}

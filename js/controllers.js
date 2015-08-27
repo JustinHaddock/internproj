@@ -9,7 +9,7 @@ bubbleController.factory("dataStorage", function() {
     var uid = null;
     var projName;
 
-    dataS.addNode = function(data) {
+    dataS.addNode = function(data){
         if (dataS.nodes.getIds().indexOf(data.id) > -1){
             dataS.nodes.update(data);
         }
@@ -18,6 +18,7 @@ bubbleController.factory("dataStorage", function() {
             dataS.nodeId++;
         }
     };
+
     dataS.resetEdges = function() {
         dataS.edges = new vis.DataSet();
     };
@@ -41,7 +42,7 @@ bubbleController.factory("dataStorage", function() {
 });
 
 
-bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$firebaseArray', '$location', function(dataStorage, $routeParams, $firebaseArray, $location) {
+bubbleController.directive('showBubbles',['dataStorage', '$route', '$routeParams', '$firebaseArray', '$location', '$q', function(dataStorage, $routeParams, $route, $firebaseArray, $location, $q) {
     var Controller;
     var userData = $firebaseArray(ref);
 
@@ -51,10 +52,8 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
         var data;
         var nodes = dataStorage.getNodes();
         var edges = dataStorage.getEdges();
-        var projNum = $routeParams.projId;
         var network;
         var theOptions;
-        this.projName;
 
         // STATISTICS
         listData.maxSizeSprint;
@@ -63,13 +62,13 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
         listData.totalHours;
         listData.totalSprints;
 
-        //Math divisors
+        // Math divisors
         var hMult = 2;
         var sMult = 10;
-        
-        if (dataStorage.uid == null){
-            $location.path('/home');
-        }
+        // if (dataStorage.uid == null){
+        //     $location.path('/home');
+        // }
+        var uid = localStorage.getItem('uid');
         
         function clearPopUp() {
             document.getElementById('saveButton').onclick = null;
@@ -85,7 +84,6 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
             return dataStorage.projName
         }
         function backup(nodes, edges){
-            var uid = dataStorage.uid;
             ref.child(uid).child(projNum).update({
                 "nodes": nodes,
                 "edges": edges
@@ -99,6 +97,12 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
                     nodes: new vis.DataSet(),
                     edges: new vis.DataSet()
                 });
+        }
+
+        listData.logoutUser = function() {
+            dataStorage.uid = null;
+            ref.unauth();
+            $location.path('/home');
         }
         listData.togglePhysics = function(){
             if (theOptions.physics.enabled){
@@ -168,6 +172,7 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
                     break;
             }
         }
+
         function getColor(importance) {
             switch (importance) {
                 case '1':
@@ -187,30 +192,40 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
                     break;
             }
         }
-        listData.open = (function() {
+        function getUserData(){
+            var deferred = $q.defer();
+            var data = $firebaseArray(ref).$loaded(
+                function(data){
+                    deferred.resolve(data);
+                }
+            );
+            return deferred.promise
+        }
 
-            var nodes = [];
-            var edges = []; 
-            dataStorage.resetAll();
-
-            
-            var uid = dataStorage.uid;
+        function getNodeData(userData){
+            var projNum = $routeParams.current.params.projId
+            var allTheData = []
             if (userData.$getRecord(uid) != null){
                 thisUser = userData.$getRecord(uid);
                 if (thisUser[projNum] != null){
                     projectData = thisUser[projNum];
                     if (projectData.nodes != null){
-                        nodes = projectData.nodes;
+                        allTheData[0] = projectData.nodes;
                     }
                     if (projectData.edges != null){
-                        edges = projectData.edges;
+                        allTheData[1] = projectData.edges;
                     }
                     this.projName = projectData.name
                 }
             }
+            return allTheData
+        }
+
+        function makeTheNetwork(nodes, edges){
+
+            dataStorage.resetAll();
 
             var container = document.getElementById('mynetwork');
-            //Doesn't get the element for some reason
 
             var options = {
                 physics: {
@@ -281,6 +296,18 @@ bubbleController.directive('showBubbles',['dataStorage', '$routeParams', '$fireb
                 edges: edges
             }
             network = new vis.Network(container, data, options);
+        }
+
+        listData.open = (function() {
+
+            getUserData().then(function(res){
+                var allTheData = getNodeData(res);
+                nodes = allTheData[0]
+                edges = allTheData[1]
+                makeTheNetwork(nodes, edges);
+                
+            });
+
         })();
         return listData;
     };
