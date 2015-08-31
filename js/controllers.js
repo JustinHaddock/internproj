@@ -64,9 +64,7 @@ bubbleController.directive('showBubbles', ['dataStorage', '$route', '$routeParam
         // Math divisors
         var hMult = 2;
         var sMult = 10;
-        // if (dataStorage.uid == null){
-        //     $location.path('/home');
-        // }
+
         var uid = localStorage.getItem('uid');
 
         function clearPopUp() {
@@ -79,14 +77,17 @@ bubbleController.directive('showBubbles', ['dataStorage', '$route', '$routeParam
             clearPopUp();
             callback(null);
         }
+
         listData.getProjName = function() {
             return dataStorage.projName
         }
+
         listData.savePositions = function() {
             network.storePositions();
             console.log(network.body.data.nodes.get());
             backup(network.body.data.nodes.get(), dataStorage.getEdges());
         }
+        
         function backup(nodes, edges) {
             var projNum = $routeParams.current.params.projId
             ref.child(uid).child(projNum).update({
@@ -310,7 +311,6 @@ bubbleController.directive('showBubbles', ['dataStorage', '$route', '$routeParam
         }
 
         listData.open = (function() {
-
             getUserData().then(function(res) {
                 var allTheData = getNodeData(res);
                 nodes = allTheData[0]
@@ -318,7 +318,6 @@ bubbleController.directive('showBubbles', ['dataStorage', '$route', '$routeParam
                 makeTheNetwork(nodes, edges);
 
             });
-
         })();
         return listData;
     };
