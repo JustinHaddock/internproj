@@ -14,10 +14,10 @@ choiceController.controller("projectChooseController", ['dataStorage', 'ngDialog
     this.initializeNames = function(){
         var fireData = $firebaseArray(ref);
         fireData.$loaded(function () {
-        	userData = fireData.$getRecord(uid);
-    		$scope.projNames[0] = userData["1"]["name"]
-    		$scope.projNames[1] = userData["2"]["name"]
-    		$scope.projNames[2] = userData["3"]["name"]
+          userData = fireData.$getRecord(uid);
+          $scope.projNames[0] = userData["1"]["name"]
+          $scope.projNames[1] = userData["2"]["name"]
+          $scope.projNames[2] = userData["3"]["name"]
       	});
     }
   	this.initializeNames();

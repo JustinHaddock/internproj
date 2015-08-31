@@ -1,7 +1,7 @@
 <section class="right">
   <section class="bubbleDisplay">
     <h1>{{listData.getProjName()}}</h1>
-    <button style="float: right" ng-click="listData.logoutUser()">Logout</button>
+    <button style="float: right; margin-left:5px;" ng-click="listData.logoutUser()">Logout</button>
     <div id='network-popUp'>
         <span id="operation">node</span> <br>
         <table style='margin:auto;'>
@@ -49,6 +49,9 @@
       </td>
       <td>
         <button ng-click="listData.togglePhysics()">Toggle Physics</button>
+      </td>
+      <td>
+        <button ng-click="listData.savePositions()">Save Task Positions</button>
       </td>
     </tr>
   </table>

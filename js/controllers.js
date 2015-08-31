@@ -82,7 +82,11 @@ bubbleController.directive('showBubbles', ['dataStorage', '$route', '$routeParam
         listData.getProjName = function() {
             return dataStorage.projName
         }
-
+        listData.savePositions = function() {
+            network.storePositions();
+            console.log(network.body.data.nodes.get());
+            backup(network.body.data.nodes.get(), dataStorage.getEdges());
+        }
         function backup(nodes, edges) {
             var projNum = $routeParams.current.params.projId
             ref.child(uid).child(projNum).update({
@@ -237,6 +241,7 @@ bubbleController.directive('showBubbles', ['dataStorage', '$route', '$routeParam
             var options = {
                 physics: {
                     enabled: true,
+                    solver: "forceAtlas2Based"
                 },
                 manipulation: {
                     addNode: function(data, callback) {

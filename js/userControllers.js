@@ -5,7 +5,7 @@ var ref = new Firebase("https://bubbleview.firebaseio.com");
 userController.controller("userManagement", ['$scope', 'ngDialog', '$location', 'dataStorage', function($scope, ngDialog, $location, dataStorage) {
     this.email = "";
     this.pass = "";
-    this.emessage = "";
+    this.emessage = ""  ;
 
     ref.onAuth(function(authData) {
       if (authData) {
@@ -78,8 +78,6 @@ bubbleController.controller("createController", ['$scope', '$firebaseArray', fun
         }, function(error, userData) {
             if (error) {
                 create.emessage = "Entered email is invalid";
-                console.log("This shit don't work");
-                console.log(create.emessage);
                 $scope.$apply();
             } else {
                 console.log("Success!");
