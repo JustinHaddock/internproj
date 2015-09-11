@@ -8,18 +8,17 @@ userController.controller("userManagement", ['$scope', 'ngDialog', '$location', 
     this.emessage = ""  ;
 
     ref.onAuth(function(authData) {
-      if (authData) {
-        dataStorage.uid = authData.uid;
+        if (authData) {
+            dataStorage.uid = authData.uid;
+            localStorage.setItem('uid', authData.uid)
 
-        localStorage.setItem('uid', authData.uid)
-
-        if ($location.path() == '/home'){
-            $location.path('/projects');
+            if ($location.path() == '/home'){
+                $location.path('/projects');
+            }
+        } else {
+            dataStorage.uid = null;
+            $location.path('/home'); 
         }
-      } else {
-        dataStorage.uid = null;
-        $location.path('/home'); 
-      }
     });
 
     this.loginUser = function() {
@@ -52,6 +51,7 @@ userController.controller("userManagement", ['$scope', 'ngDialog', '$location', 
             }
         });
     }
+
     this.createDialog = function(){
         $scope.email = this.email;
         $scope.password = this.pass;
@@ -97,7 +97,6 @@ bubbleController.controller("createController", ['$scope', '$firebaseArray', fun
         });
     }
     return create;
-
 }])
 
 bubbleController.directive('ngConfirmClick', [

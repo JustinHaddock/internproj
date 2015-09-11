@@ -8,6 +8,7 @@ choiceController.controller("projectChooseController", ['dataStorage', 'ngDialog
 	$scope.projNames[1] = "";
 	$scope.projNames[2] = "";
 	this.loaded = false;
+
 	if (dataStorage.uid == null){
         $location.path('/home');
     }
@@ -20,7 +21,9 @@ choiceController.controller("projectChooseController", ['dataStorage', 'ngDialog
           $scope.projNames[2] = userData["3"]["name"]
       	});
     }
+
   	this.initializeNames();
+
   	this.getName = function(num){
   		if ($scope.projNames[num] == ""){
   			return false
@@ -40,17 +43,17 @@ choiceController.controller("projectChooseController", ['dataStorage', 'ngDialog
   		dataStorage.projName = $scope.projNames[num]
   	}
 
-	this.changeName = function(projNum){
-		$scope.projNum = projNum;
-		var uid = dataStorage.uid;
-		ngDialog.openConfirm({
-			className: 'ngdialog-theme-default',
-            template: 'partials/changeName.html',
-            controller: 'newNameController as NNC',
-            scope: $scope
-        })
-        this.initializeNames();
-	}
+    this.changeName = function(projNum){
+      $scope.projNum = projNum;
+      var uid = dataStorage.uid;
+      ngDialog.openConfirm({
+        className: 'ngdialog-theme-default',
+        template: 'partials/changeName.html',
+        controller: 'newNameController as NNC',
+        scope: $scope
+      })
+      this.initializeNames();
+    }
 }]);
 
 choiceController.controller("newNameController", ['dataStorage', '$scope', '$route', function(dataStorage, $scope, $route) {

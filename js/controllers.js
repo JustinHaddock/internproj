@@ -87,7 +87,7 @@ bubbleController.directive('showBubbles', ['dataStorage', '$route', '$routeParam
             console.log(network.body.data.nodes.get());
             backup(network.body.data.nodes.get(), dataStorage.getEdges());
         }
-        
+
         function backup(nodes, edges) {
             var projNum = $routeParams.current.params.projId
             ref.child(uid).child(projNum).update({
@@ -110,6 +110,7 @@ bubbleController.directive('showBubbles', ['dataStorage', '$route', '$routeParam
             ref.unauth();
             $location.path('/home');
         }
+
         listData.togglePhysics = function() {
             if (theOptions.physics.enabled) {
                 theOptions.physics.enabled = false;
